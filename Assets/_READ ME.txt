@@ -1,0 +1,21 @@
+For only local front end test:
+
+Do like this at 2546 line of Function SpineBet() in OhtoMenu.cs
+	//for local test;
+        serverWinPoint = UnityEngine.Random.Range(1, 33);
+        trigerSpinBet = true;
+
+And 54 line of SockIOManage.cs
+	//OthoMenu.instance.serverWinPoint = gameResult.wedge;
+        //OthoMenu.instance.trigerSpinBet = true;
+
+
+For work as front end :
+
+Do like this at 2546 line of Function SpineBet() in OhtoMenu.cs
+	//for local test;
+        //serverWinPoint = UnityEngine.Random.Range(1, 33);
+        //trigerSpinBet = true;
+And 54 line of SockIOManage.cs
+	OthoMenu.instance.serverWinPoint = gameResult.wedge;
+        OthoMenu.instance.trigerSpinBet = true;
