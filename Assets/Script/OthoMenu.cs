@@ -404,6 +404,9 @@ namespace CED_Roulette
                 selChipObj.transform.GetChild(0).GetComponent<TMP_Text>().text = chipValue.ToString();
 
                 dicChipObjects[selChipObj.name].chipValue = chipValue;
+
+                AddHistory(selChipObj.name, curBetValue);
+                historyIndex++;
             }
             else
             {
@@ -421,11 +424,11 @@ namespace CED_Roulette
                 chipObj.buttonName = selObj.name.Substring(6);
                 chipObj.positionInButton = 0;
                 chipObj.chipValue = curBetValue;
-                chipObj.historyIndex = historyIndex;
+                //chipObj.historyIndex = historyIndex;
                 dicChipObjects.Add(chipInstant.name, chipObj);
 
                 AddHistory(chipInstant.name, curBetValue);
-
+                historyIndex++;
                 ChangeChipSprite(chipInstant, curBetValue);
             }
 
@@ -523,7 +526,7 @@ namespace CED_Roulette
                     chipObj.name = chipInstant.name;
 
                     chipObj.chipValue = curBetValue;
-                    chipObj.historyIndex = historyIndex;
+                    //chipObj.historyIndex = historyIndex;
                     dicChipObjects.Add(chipInstant.name, chipObj);
 
                     //Debug.Log("current history value: " + historyIndex);
@@ -1000,7 +1003,7 @@ namespace CED_Roulette
             chipObj.buttonName = strSelObjIdx;// "RoundChip"        
             chipObj.positionInButton = chipPos;
             chipObj.chipValue = chipValue;
-            chipObj.historyIndex = historyIndex;
+            //chipObj.historyIndex = historyIndex;
             dicChipObjects.Add(chipInstant.name, chipObj);
 
             AddHistory(chipInstant.name, chipValue);
@@ -2547,7 +2550,10 @@ namespace CED_Roulette
             {
                 if (isSpinBet) return;
                 if (!beginBet) return;
-                pan_AutoSpin.SetActive(true);
+                if (pan_AutoSpin.activeSelf)
+                    pan_AutoSpin.SetActive(true);
+                else 
+                    pan_AutoSpin.SetActive(true);
             }
             else
             {
@@ -2572,7 +2578,7 @@ namespace CED_Roulette
             foreach (Chip chip in dicChipObjects.Values)
             {
                 //Debug.Log("chip.name = " + chip.name);
-                CreatChipsFromData(chip);
+                CreatChipFromDicData(chip);
             }
             beginBet = true;
             btn_Rebet.SetActive(false);
@@ -2586,7 +2592,7 @@ namespace CED_Roulette
             foreach (Chip chip in dicChipObjects.Values)
             {
                 //Debug.Log("chip.name = " + chip.name);
-                CreatChipsFromData(chip);
+                CreatChipFromDicData(chip);
             }
             btn_Rebet.SetActive(false);
             btn_RebetAndSpin.SetActive(false);
@@ -2767,10 +2773,11 @@ namespace CED_Roulette
                 }
             }
 
+            historyIndex = 0;
             foreach (Chip chip in dicChipObjects.Values)
             {
                 //Debug.Log("Get data from saved data: Chip.name = " + chip.name);
-                CreatChipsFromData(chip);
+                CreatChipFromDicData(chip);
             }
         }
 
@@ -2786,7 +2793,7 @@ namespace CED_Roulette
 
         }
 
-        private void CreatChipsFromData(Chip curChip)
+        private void CreatChipFromDicData(Chip curChip)
         {
             //Debug.Log("CreatChipsFromData!");
             Vector3 vChipPos = new Vector3(0f, 0f, 0f);
@@ -2796,21 +2803,22 @@ namespace CED_Roulette
             if (curChip.buttonName.Substring(0, 2) == "Ro") // Round. if length 5, have erro because of length problem such as 02;
             {
                 parentName = "Round_" + curChip.buttonName;
+                //AddHistory(curChip.name, curChip.chipValue, true);
             }
             else
             {
                 parentName = "Squar_" + curChip.buttonName;
+                //AddHistory(curChip.name, curChip.chipValue);
             }
             //Debug.Log("parentName = " + parentName);
+
             GameObject buttonInSquare = GameObject.Find(parentName);
             chipInstant.transform.SetParent(buttonInSquare.transform, false);
             vChipPos = GetRecPos(buttonInSquare, curChip.positionInButton);
             chipInstant.GetComponent<RectTransform>().anchoredPosition = vChipPos;
             ChangeChipSprite(chipInstant, curChip.chipValue);
-            chipInstant.transform.GetChild(0).GetComponent<TMP_Text>().text = curChip.chipValue.ToString();
-
-            //Debug.Log("current history value: " + historyIndex);
-            historyIndex++;
+            chipInstant.transform.GetChild(0).GetComponent<TMP_Text>().text = curChip.chipValue.ToString();           
+            
         }
 
         private Vector2 GetRecPos(GameObject selObj, int chipPos)
